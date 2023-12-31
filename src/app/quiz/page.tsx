@@ -85,45 +85,47 @@ const Quiz = () => {
     const presentFlag = (quiz: QuizSet|undefined) => {
         const correctFlag = quiz?.quizFlags[quiz.quizPos]??undefined;
 
-        return <div className="w-52 p-2 m-2 font-light flex flex-col items-center" key={correctFlag?.url}>
+        return <div className="w-80 p-2 m-2 font-light flex flex-col items-center" key={correctFlag?.url}>
                     <div className="bg-slate-50">
-                        <img className= "shadow-2xl" src={correctFlag?.url} width="400" height="300" alt="???????"/>
+                        <img className= "shadow-2xl" src={correctFlag?.url} width="300" height="250" alt="???????"/>
                     </div>
                 </div>
     }
 
     const presentAlternatives = (quiz: QuizSet|undefined) => {
-        const classN = "my-1 px-2 text-wrap cursor-pointer";
+        const classN = "display-inline my-2 px-4 border text-wrap cursor-pointer";
         //const classCorr = "my-1 px-2 text-wrap bg-green-500 cursor-pointer";
         const ix = quiz?.quizPos;
 
-        var lineTp: string[] = ["my-1 px-2 text-wrap cursor-pointer", "my-1 px-2 text-wrap cursor-pointer", "my-1 px-2 text-wrap cursor-pointer"]
+        var lineTp: string[] = ["my-2 px-4 text-wrap cursor-pointer", "my-2 px-4 text-wrap cursor-pointer", "my-2 px-4 text-wrap cursor-pointer"]
         if (answerIx === ix)
-            lineTp[ix] = "my-1 px-2 text-wrap bg-green-500 cursor-pointer"
+            lineTp[ix] = "my-2 px-4 text-wrap bg-green-500 cursor-pointer"
         else
         {
-            (ix!== undefined) && (lineTp[ix] = "my-1 px-2 text-wrap bg-green-300 cursor-pointer");
-            (answerIx !== -1) && (lineTp[answerIx] = "my-1 px-2 text-wrap bg-red-600 cursor-pointer")
+            (ix!== undefined) && (lineTp[ix] = "my-2 px-4 text-wrap bg-green-300 cursor-pointer");
+            (answerIx !== -1) && (lineTp[answerIx] = "my-2 px-4 text-wrap bg-red-600 cursor-pointer")
         }
 
         return (
             <>
-                <div onClick={() => onAnswerQuiz(0)} className={(reveal? lineTp[0]:classN)}>{quiz?.quizFlags[0].name}</div>
-                <div onClick={() => onAnswerQuiz(1)} className={(reveal? lineTp[1]:classN)}>{quiz?.quizFlags[1].name}</div>
-                <div onClick={() => onAnswerQuiz(2)} className={(reveal? lineTp[2]:classN)}>{quiz?.quizFlags[2].name}</div>
+                <div onClick={() => onAnswerQuiz(0)} className={(reveal? lineTp[0]:classN)}>- {quiz?.quizFlags[0].name}</div>
+                <div onClick={() => onAnswerQuiz(1)} className={(reveal? lineTp[1]:classN)}>- {quiz?.quizFlags[1].name}</div>
+                <div onClick={() => onAnswerQuiz(2)} className={(reveal? lineTp[2]:classN)}>- {quiz?.quizFlags[2].name}</div>
             </>
         )
     }
 
     
     return (
-        <div className="container p-8 bg-white text-black" >
-            <div className="mx-auto">
+        <div className="p-2 bg-white text-black" >
+            <div className="mx-auto w-80">
+                <div className="flex flex-col justify-items-center place-items-stretch">
                 {(currentQuiz) && presentFlag(currentQuiz)}
-                <div>Velg alternativ:</div>
-                {(currentQuiz) && presentAlternatives(currentQuiz)}
-                <button className="m-2 bg-blue-500 hover:bg-blue-700  text-white py-2 px-4 rounded" 
-                    onClick={selectNextQuiz}>{(currentQuiz)?"Neste":"Sett i gang"} </button>
+                    <div className="mx-4 my-2">Velg alternativ:</div>
+                    {(currentQuiz) && presentAlternatives(currentQuiz)}
+                    <button className="m-3 bg-blue-500 hover:bg-blue-700  text-white py-2 px-4 rounded" 
+                        onClick={selectNextQuiz}>{(currentQuiz)?"Neste":"Sett i gang"} </button>
+                </div>
             </div>
         </div>
     )
