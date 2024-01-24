@@ -58,8 +58,21 @@ const Quiz = () => {
     const selectNextQuiz= ():void => {
         const newIxNumber = drawRandomIx(flags.length);
         const newIx = Math.floor(newIxNumber);
-        const newIx2 = Math.floor(drawRandomIx(flags.length));
-        const newIx3 = Math.floor(drawRandomIx(flags.length));
+        var newIx2:number =0;
+        var finished:boolean = false;
+        while (!finished) {
+            newIx2 = Math.floor(drawRandomIx(flags.length))
+            if (newIx2 !== newIx) finished=true;
+        }
+        finished=false;
+        var newIx3: number = 0;
+        //const newIx2 = Math.floor(drawRandomIx(flags.length));
+        while (!finished) {
+            newIx3 = Math.floor(drawRandomIx(flags.length))
+            if ((newIx3 !== newIx) && (newIx3 !== newIx2))  finished=true;
+        }
+        
+        //const newIx3 = Math.floor(drawRandomIx(flags.length));
         const correctPos = Math.floor(drawRandomIx(3));
         
         const correctFlag:FlagType = flags[newIx];
