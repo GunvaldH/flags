@@ -70,7 +70,7 @@ const AllTheFlags = () => {
     }
 
     return (
-        <div>
+        <div className="bg-slate-50">
             <h1 className="text-center">ALLE VERDENS FLAGG</h1>
             <div className="">
                  {(countrycodes) && presentFlags(getNoUSStatesFlagList(countrycodes))}

@@ -6,9 +6,15 @@
     "configurations": [
         {
             "type": "msedge",
+            "name": "https://localhost:3000",
             "request": "launch",
-            "name": "Launch Edge against localhost",
-            "url": "http://localhost:3001",
+            "url": "https://localhost:3000"
+        },
+        {            
+            "type": "chrome",
+            "request": "launch",
+            "name": "Next: Chrome",
+            "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}"
         }
     ]
