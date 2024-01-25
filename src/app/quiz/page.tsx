@@ -112,8 +112,8 @@ const Quiz = () => {
     const presentFlag = (quiz: QuizSet|undefined) => {
         const correctFlag = quiz?.quizFlags[quiz.quizPos]??undefined;
 
-        return <div className="w-80 p-2 m-2 font-light flex flex-col items-center" key={correctFlag?.url}>
-                    <div className="bg-slate-50">
+        return <div className="w-80 font-light flex flex-col items-center" key={correctFlag?.url}>
+                    <div className="bg-slate-500">
                         <img className= "shadow-2xl" src={correctFlag?.url} width="300" height="250" alt="???????"/>
                     </div>
                 </div>
@@ -157,14 +157,14 @@ const Quiz = () => {
             <div className="mx-auto w-80">
                 <div className="flex flex-col justify-items-center place-items-stretch">
                 {(currentQuiz) && presentFlag(currentQuiz)}
-                    <div className="mx-4 mt-6">Velg alternativ:</div>
+                    <div className="mx-4 mt-8">Velg alternativ:</div>
                     {(currentQuiz) && presentAlternatives(currentQuiz)}
-                    <button className="m-3 bg-blue-500 hover:bg-blue-700  text-white py-2 px-4 rounded" 
+                    <button className="mt-8 bg-blue-500 hover:bg-blue-700  text-white py-4 rounded" 
                         onClick={selectNextQuiz}>{(currentQuiz)?"Neste":"Sett i gang"} </button>
-                </div>
-                    <div className="flex flex-row wrap">
+                    <div className="flex flex-row flex-wrap">
                         {results.map((i, index)=> <div key={index}>{(i.answer)?"😊":"🤨"}</div>)}
                     </div>
+                </div>
             </div>
         </div>
     )
