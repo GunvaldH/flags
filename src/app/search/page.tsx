@@ -1,5 +1,6 @@
 'use client'
 import {useState, useEffect} from 'react';
+import {SearchField, Label, Input, Button} from 'react-aria-components';
 
 const urlbase = "https://flagcdn.com/"
 
@@ -12,6 +13,7 @@ type FlagType = {
 
 const AllTheFlags = () => {
 
+    const [filter, setFilter] = useState<string>("");
     const [flags, setFlags] = useState<FlagType[]>([])
     const [countrycodes, setcountrycodes] = useState(null);
 
@@ -65,6 +67,11 @@ const AllTheFlags = () => {
         return sortedflags;
     }
 
+    const filterFlagList = (searchText:string, unfilteredFlags: FlagType[]):FlagType[] => {
+        const filteredList:FlagType[] = (searchText === "")? unfilteredFlags: unfilteredFlags.filter((item) => item.name.includes(searchText.toUpperCase()));
+        return filteredList; 
+    }
+
     const presentFlag = (flag: FlagType) => {
         return <div className="w-52 p-2 m-2 font-light flex flex-col items-center" key={flag.url}>
                     <div className="bg-slate-50">
@@ -76,9 +83,13 @@ const AllTheFlags = () => {
 
     return (
         <div className="bg-slate-50">
-            <h1 className="text-center">ALLE VERDENS FLAGG</h1>
+
+            <SearchField onChange={setFilter} className="text-center" autoFocus>
+                <Label className="align-baseline">SØK ETTER FLAGG:</Label>
+                <Input className="px-2"/>
+            </SearchField>
             <div className="">
-                 {(countrycodes) && presentFlags(sortedFlagList(getNoUSStatesFlagList(countrycodes)))}
+                 {(countrycodes) && presentFlags(sortedFlagList(filterFlagList(filter, getNoUSStatesFlagList(countrycodes))))}
             </div>
         </div>
     )

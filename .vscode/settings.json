@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/afecb616-30f8-42b3-a3fe-081db47bead0/resourceGroups/PictureGallery-RG2/providers/Microsoft.Web/sites/flagg",
+    "appService.deploySubpath": "."
+}

@@ -30,7 +30,6 @@ type QuizResult = {
 
 const Quiz = () => {
 
-    const [currentFlag, setCurrentFlag] = useState<FlagType>();
     const [currentQuiz, setCurrentQuiz] = useState<QuizSet>();
     const [reveal, setReveal] = useState<boolean>(false);
     const [answerIx, setAnswerIx] = useState<number>(-1);
@@ -56,64 +55,95 @@ const Quiz = () => {
                 var i:number = 0;
                 for (const [key, value] of Object.entries(cc)) 
                 {
-                    if (!key.startsWith("us-")) 
-                        ret[i++] = {url: urlbase + key + ".svg", countrycode: key, name: value.toUpperCase(), ix:i};
-                    
+                    if (!key.startsWith("us-")) {
+                        ret[i] = {url: urlbase + key + ".svg", countrycode: key, name: value.toUpperCase(), ix:i};
+                        i++;
+                    }                    
                 }
                 return ret;
         }
     }
 
 
-    const drawRandomIx = (numberOfFlags: number): number => {
-        return Math.random()*numberOfFlags;
-    } 
-    const selectNextQuiz= ():void => {
-        const newIxNumber = drawRandomIx(flags.length);
-        const newIx = Math.floor(newIxNumber);
-        var newIx2:number =0;
-        var finished:boolean = false;
-        while (!finished) {
-            newIx2 = Math.floor(drawRandomIx(flags.length))
-            if (newIx2 !== newIx) finished=true;
+    const drawRandomIx = (numberOfFlags: number, avoid:number[]): number => {
+        let finished:boolean = false;
+        let candidate: number = Math.floor(Math.random()*numberOfFlags)
+        while(avoid.includes(candidate)) {
+            candidate = Math.floor(Math.random()*numberOfFlags);
         }
-        finished=false;
-        var newIx3: number = 0;
-        //const newIx2 = Math.floor(drawRandomIx(flags.length));
-        while (!finished) {
-            newIx3 = Math.floor(drawRandomIx(flags.length))
-            if ((newIx3 !== newIx) && (newIx3 !== newIx2))  finished=true;
-        }
-        
-        //const newIx3 = Math.floor(drawRandomIx(flags.length));
-        const correctPos = Math.floor(drawRandomIx(3));
-        
-        const correctFlag:FlagTypeExt = flags[newIx];
-        const wrongFlag2:FlagTypeExt = flags[newIx2];
-        const wrongFlag3:FlagTypeExt = flags[newIx3];
+        return candidate;
+    }
 
-        const nextQuiz:QuizSet = {quizFlags: [correctFlag, wrongFlag2, wrongFlag3], quizPos: correctPos};
+    const selectNextQuiz= (useErr?:boolean):void => {
+        let earlierQuizError:QuizResult|undefined = undefined;
+        let newIx0:number|undefined = undefined;
+        let newIx1:number|undefined = undefined;
+        let newIx2:number|undefined = undefined;
+
+        const correctQuizPos = Math.floor(drawRandomIx(3, []));
+
+        if (useErr) {
+            earlierQuizError = results.find(i => i.answer === false);
+        }
+
+        if (correctQuizPos === 0)
+            newIx0 = (earlierQuizError?.flagIndex)??Math.floor(drawRandomIx(flags.length, []))
+        else 
+            newIx0 = Math.floor(drawRandomIx(flags.length, []));
+        
+        if (correctQuizPos === 1)
+            newIx1 = (earlierQuizError?.flagIndex)??Math.floor(drawRandomIx(flags.length, [newIx0]))
+        else 
+            newIx1 = Math.floor(drawRandomIx(flags.length, [newIx0]));
+
+        if (correctQuizPos === 2)
+            newIx2 = (earlierQuizError?.flagIndex)??Math.floor(drawRandomIx(flags.length, [newIx0, newIx1]))
+        else 
+            newIx2 = Math.floor(drawRandomIx(flags.length, [newIx0, newIx1]));
+
+        const flag0:FlagTypeExt = flags[newIx0];
+        const flag1:FlagTypeExt = flags[newIx1];
+        const flag2:FlagTypeExt = flags[newIx2];
+
+        const nextQuiz:QuizSet = {quizFlags: [flag0, flag1, flag2], quizPos: correctQuizPos};
         setReveal(false);
         setAnswerIx(-1);
         setCurrentQuiz(nextQuiz);
+    }
 
-        const a = correctFlag;
-        setCurrentFlag(correctFlag);
+    const updateResults = (oldResults:QuizResult[], newResult:QuizResult):QuizResult[] => {
+        // If same flag has been used before, update that result, else add result
+        let newResults:QuizResult[]= [];
+        const prevAnswerIx:number = oldResults.findIndex((r) => r.flagIndex === newResult.flagIndex)
+        if ((prevAnswerIx!==-1) && (oldResults[prevAnswerIx].answer===false)) {// update old answer
+            oldResults[prevAnswerIx].answer = newResult.answer;
+            newResults = [...oldResults];
+        }
+        else if (prevAnswerIx===-1) // add new result
+            newResults = [...results, newResult];
+            
+        return newResults;
+
     }
 
     const onAnswerQuiz = (answerIx: number, quizPos:number, correctFlagIndex: number) => {
         if (!reveal){
             setReveal(true);
             setAnswerIx(answerIx);
-            setResults([...results, {flagIndex: correctFlagIndex, answer: (answerIx === quizPos)?true:false}]);
+            const newResultset:QuizResult[] = updateResults(results, {flagIndex: correctFlagIndex, answer: (answerIx === quizPos)?true:false});
+            setResults(newResultset);
         }
+    }
+
+    const onErr = () => {
+        selectNextQuiz(true);
     }
 
     const presentFlag = (quiz: QuizSet|undefined) => {
         const correctFlag = quiz?.quizFlags[quiz.quizPos]??undefined;
 
         return <div className="w-80 font-light flex flex-col items-center" key={correctFlag?.url}>
-                    <div className="bg-slate-500">
+                    <div className="">
                         <img className= "shadow-2xl" src={correctFlag?.url} width="300" height="250" alt="???????"/>
                     </div>
                 </div>
@@ -155,14 +185,15 @@ const Quiz = () => {
     return (
         <div className="p-2 bg-white text-black" >
             <div className="mx-auto w-80">
+                {(currentQuiz) && <div className="mx-4 mt-8 mb-2">Hvilket flagg er dette?</div>}
                 <div className="flex flex-col justify-items-center place-items-stretch">
                 {(currentQuiz) && presentFlag(currentQuiz)}
                     <div className="mx-4 mt-8">Velg alternativ:</div>
                     {(currentQuiz) && presentAlternatives(currentQuiz)}
                     <button className="mt-8 bg-blue-500 hover:bg-blue-700  text-white py-4 rounded" 
-                        onClick={selectNextQuiz}>{(currentQuiz)?"Neste":"Sett i gang"} </button>
-                    <div className="flex flex-row flex-wrap">
-                        {results.map((i, index)=> <div key={index}>{(i.answer)?"😊":"🤨"}</div>)}
+                        onClick={() => selectNextQuiz()}>{(currentQuiz)?"Neste":"Sett i gang"} </button>
+                    <div className="mt-3 flex flex-row flex-wrap">
+                        {results.map((i, index)=> <button onClick={onErr} key={index}>{(i.answer)?"😊":"🙃"}</button>)}
                     </div>
                 </div>
             </div>
