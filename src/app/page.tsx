@@ -23,6 +23,11 @@ export default function Home() {
           href='/flagpage'
           key='Alle flagg'>{'Alle flagg'}
         </Link>
+        <Link
+          className='bg-blue-500 hover:bg-blue-700 text-white font-bold m-4 py-2 px-4 rounded'
+          href='/flagpageusa'
+          key='Amerikanske stater'>{'Amerikanske flagg'}
+        </Link>
         </div>
 
 
