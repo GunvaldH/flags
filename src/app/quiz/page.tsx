@@ -192,8 +192,8 @@ const Quiz = () => {
                     {(currentQuiz) && presentAlternatives(currentQuiz)}
                     <button className="mt-8 bg-blue-500 hover:bg-blue-700  text-white py-4 rounded" 
                         onClick={() => selectNextQuiz()}>{(currentQuiz)?"Neste":"Sett i gang"} </button>
-                    <div className="mt-3 flex flex-row flex-wrap">
-                        {results.map((i, index)=> <button onClick={onErr} key={index}>{(i.answer)?"😊":"🙃"}</button>)}
+                    <div className="text-3xl mt-3 flex flex-row flex-wrap">
+                        {results.map((i, index)=> <button onClick={onErr} key={index}>{(i.answer)?"😊":"🤢"}</button>)}
                     </div>
                 </div>
             </div>
